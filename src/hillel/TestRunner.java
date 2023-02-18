@@ -5,52 +5,31 @@ import hillel.anotation.BeforeSuite;
 import hillel.anotation.Test;
 
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class TestRunner {
 
-    @Test
-    public void testMyMethod() {
-
-        System.out.println("This is Test annotation");
-    }
-
-    @AfterSuite
-    public void afterMyMethod()  {
-
-
-        System.out.println("This is AfterSuite annotation");
-    }
-
-    @BeforeSuite
-    public void beforeMyMethod()  {
-
-        System.out.println("This is BeforeSuite annotation");
-
-
-    }
-
-    public static void start(TestRunner c) throws InvocationTargetException, IllegalAccessException {
-
-        for (Method method : c.getClass().getMethods()) {
-           if (method.isAnnotationPresent(Test.class)) {
-               // int test =
-                        method.getDeclaredAnnotation(Test.class).priority();
-
-                method.invoke(c);
+    public static void start(Class <?> c) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+            Constructor<?> constructor = c.getDeclaredConstructor();
+            CalculatorTest calculatorTest = (CalculatorTest) constructor.newInstance();
+        for (Method method : calculatorTest.getClass().getDeclaredMethods()) {
+           if (method.isAnnotationPresent(BeforeSuite.class)) {
+                method.getDeclaredAnnotation(BeforeSuite.class);
+                method.invoke(calculatorTest);
             }
 
-            if (method.isAnnotationPresent(BeforeSuite.class)) {
-               // int beforeSuite =
-                        method.getDeclaredAnnotation(BeforeSuite.class).priority();
-                method.invoke(c);
+            if (method.isAnnotationPresent(Test.class)) {
+                method.getDeclaredAnnotation(Test.class);
+                method.invoke(calculatorTest);
             }
 
             if (method.isAnnotationPresent(AfterSuite.class)) {
-              //  int afterSuite =
-                        method.getDeclaredAnnotation(AfterSuite.class).priority();
-                method.invoke(c);
+                method.getDeclaredAnnotation(AfterSuite.class);
+                method.invoke(calculatorTest);
             }
 
         }
